@@ -1,20 +1,30 @@
 {
-    "name": "cesium-starter-app",
-    "version": "1.5.0",
-    "description": "A simple JavaScript starter app for creating apps with Cesium, the open-source WebGL virtual globe and map engine.",
-    "homepage": "http://cesiumjs.org",
-    "license": "Apache-2.0",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/pjcozzi/cesium-starter-app"
-    },
-    "dependencies": {
-        "express": "~4.9.x",
-        "compression": "1.0.8",
-        "request": "2.36.0",
-        "yargs": "1.2.6"
-    },
-    "engines": {
-      "node": "0.10.x"
-    }
+  "name": "cesium-starter-app",
+  "version": "1.5.0",
+  "description": "A simple JavaScript starter app for creating apps with Cesium, the open-source WebGL virtual globe and map engine.",
+  "homepage": "http://cesiumjs.org",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pjcozzi/cesium-starter-app"
+  },
+  "dependencies": {
+    "compression": "1.0.8",
+    "eventemitter2": "^3.0.1",
+    "express": "~4.9.x",
+    "request": "2.36.0",
+    "roslib": "^0.18.0",
+    "yargs": "1.2.6"
+  },
+  "engines": {
+    "node": "0.10.x"
+  },
+  "devDependencies": {
+    "webpack": "^2.2.1"
+  },
+  "scripts": {
+    "build": "SET NODE_ENV=production & .\\node_modules\\.bin\\webpack --progress --profile --colors",
+    "dev": "SET NODE_ENV=production & .\\node_modules\\.bin\\webpack -w --progress --profile --colors",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
 }
