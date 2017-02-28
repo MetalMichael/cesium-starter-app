@@ -23,10 +23,10 @@ var ros = {
         var listener = new ROSLIB.Topic({
             ros: ros,
             name: "/uav_position",
-            messageType: "geographic_msgs/GeoPose"
+            messageType: "uavsim/Position"
         })
 
-        listener.subscribe(function(message) {
+        listener.subscribe((message) => {
             this.handlers.forEach((h) => {
                 h(message)
             })
@@ -45,4 +45,4 @@ var ros = {
     }
 }
 
-export default ros
+module.exports = ros

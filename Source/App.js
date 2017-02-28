@@ -1,58 +1,91 @@
-import ros from './Ros'
+var ros = require('./Ros')
 
-function setup() {
-    var viewer = new Cesium.Viewer('cesiumContainer', {
-        infoBox : false,
-        selectionIndicator : false,
-        shadows : true
-    })
+var app = {
 
-    ros.setup()
-    ros.addHandler(function(m) {
-        console.log(m)
-    })
-}
+    assets: {},
 
-function createModel(url, height) {
-    viewer.entities.removeAll();
+    setup: function() {
+        console.log(ros)
 
-    var position = Cesium.Cartesian3.fromDegrees(-123.0744619, 44.0503706, height);
-    var heading = Cesium.Math.toRadians(135);
-    var pitch = 0;
-    var roll = 0;
-    var orientation = Cesium.Transforms.headingPitchRollQuaternion(position, heading, pitch, roll);
+        Cesium.BingMapsApi.defaultKey = ""
 
-    var entity = viewer.entities.add({
-        name : url,
-        position : position,
-        orientation : orientation,
-        model : {
-            uri : url,
-            minimumPixelSize : 128,
-            maximumScale : 20000
+        var viewer = new Cesium.Viewer('cesiumContainer', {
+            infoBox : false,
+            selectionIndicator : false,
+            shadows : true,
+            timeline: false,
+            animation: false
+        })
+        viewer.extend(Cesium.viewerCesiumInspectorMixin);
+
+        ros.setup()
+        var init = false
+        ros.addHandler((m) => {
+            if(!init) {
+                init = true
+                console.log(m)
+                this.createModel(viewer, m)
+            } else {
+                this.updateModel(viewer, m)
+            }
+        })
+    },
+
+    createModel: function(viewer, data) {
+
+
+        var entity = viewer.entities.add({
+            name : "test1",
+            model : {
+                uri : "/models/CesiumAir/Cesium_Air.glb",
+                minimumPixelSize : 128,
+                maximumScale : 20000
+            },
+            //position: new Cesium.ConstantPositionProperty(),
+            //orientation: new Cesium.ConstantProperty(Cesium.Quaternion)
+        });
+
+        this.assets[1] = {
+            entity: entity
         }
-    });
-    viewer.trackedEntity = entity;
-}
+        
+        this.updateModel(viewer, data)
+    },
 
-function addOptions(options ) {
-    var menu = document.createElement('select');
-    menu.className = 'cesium-button';
-    menu.onchange = function() {
-        var item = options[menu.selectedIndex];
-        if (item && typeof item.onselect === 'function') {
-            item.onselect();
+    updateModel: function(viewer, data) {
+        var entity = this.assets[1].entity;
+
+        var position = Cesium.Cartesian3.fromDegrees(data.location.longitude, data.location.latitude, data.location.altitude);
+
+        var hpr = new Cesium.HeadingPitchRoll(data.hpr.heading, data.hpr.pitch, data.hpr.roll);
+        var orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
+
+        entity.position = position
+        entity.orientation = orientation
+
+        viewer.trackedEntity = entity;
+
+        console.log("Updated")
+    },
+
+    addOptions: function(options ) {
+        var menu = document.createElement('select');
+        menu.className = 'cesium-button';
+        menu.onchange = function() {
+            var item = options[menu.selectedIndex];
+            if (item && typeof item.onselect === 'function') {
+                item.onselect();
+            }
+        };
+        document.getElementById('toolbar').appendChild(menu);
+
+        for (var i = 0, len = options.length; i < len; ++i) {
+            var option = document.createElement('option');
+            option.textContent = options[i].text;
+            option.value = options[i].value;
+            menu.appendChild(option);
         }
-    };
-    document.getElementById('toolbar').appendChild(menu);
-
-    for (var i = 0, len = options.length; i < len; ++i) {
-        var option = document.createElement('option');
-        option.textContent = options[i].text;
-        option.value = options[i].value;
-        menu.appendChild(option);
     }
-}
 
 // var options = [{
 //     text : 'Aircraft',
@@ -82,5 +115,6 @@ function addOptions(options ) {
 // }];
 
 //addOptions(options);
+}
 
-setup();
+app.setup();
