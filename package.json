@@ -10,10 +10,8 @@
   },
   "dependencies": {
     "compression": "1.0.8",
-    "eventemitter2": "^3.0.1",
     "express": "~4.9.x",
     "request": "2.36.0",
-    "roslib": "^0.18.0",
     "yargs": "1.2.6"
   },
   "engines": {
